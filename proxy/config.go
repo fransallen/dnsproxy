@@ -143,6 +143,10 @@ type Config struct {
 	// requests.
 	HTTPSListenAddr []*net.TCPAddr
 
+	// HTTPListenAddr is the set of TCP addresses to listen for HTTP requests
+	// that will be redirected to HTTPS.
+	HTTPListenAddr []*net.TCPAddr
+
 	// TLSListenAddr is the set of TCP addresses to listen for DNS-over-TLS
 	// requests.
 	TLSListenAddr []*net.TCPAddr

@@ -158,6 +158,12 @@ type Proxy struct {
 	// h3Server serves queries received over HTTP/3.
 	h3Server *http3.Server
 
+	// httpListen are the listened HTTP connections for redirecting to HTTPS.
+	httpListen []net.Listener
+
+	// httpServer serves HTTP redirect requests.
+	httpServer *http.Server
+
 	// dnsCryptUDPListen are the listened UDP connections for DNSCrypt.
 	dnsCryptUDPListen []*net.UDPConn
 
@@ -435,6 +441,14 @@ func (p *Proxy) closeListeners(errs []error) (res []error) {
 
 	res = closeAll(res, p.tlsListen...)
 	p.tlsListen = nil
+
+	if p.httpServer != nil {
+		res = closeAll(res, p.httpServer)
+		p.httpServer = nil
+
+		// No need to close these since they're closed by httpServer.Close().
+		p.httpListen = nil
+	}
 
 	if p.httpsServer != nil {
 		res = closeAll(res, p.httpsServer)

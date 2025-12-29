@@ -73,6 +73,39 @@ func (p *Proxy) listenH3(
 	return quicListen, nil
 }
 
+// initHTTPListeners creates TCP listeners and HTTP server for redirects.
+func (p *Proxy) initHTTPListeners(ctx context.Context) (err error) {
+	p.httpServer = &http.Server{
+		Handler:           http.HandlerFunc(p.ServeHTTPRedirect),
+		ReadHeaderTimeout: defaultTimeout,
+		WriteTimeout:      defaultTimeout,
+	}
+
+	for _, addr := range p.HTTPListenAddr {
+		p.logger.InfoContext(ctx, "creating an http redirect server")
+
+		var tcpListen *net.TCPListener
+		err = p.bindWithRetry(ctx, func() (listenErr error) {
+			tcpListen, listenErr = net.ListenTCP(bootstrap.NetworkTCP, addr)
+			return listenErr
+		})
+		if err != nil {
+			return fmt.Errorf("failed to start HTTP server on %s: %w", addr, err)
+		}
+
+		laddr := tcpListen.Addr()
+		tcpAddr, ok := laddr.(*net.TCPAddr)
+		if !ok {
+			return fmt.Errorf("bad listener address type: %T", laddr)
+		}
+
+		p.logger.InfoContext(ctx, "listening to http", "addr", tcpAddr)
+		p.httpListen = append(p.httpListen, tcpListen)
+	}
+
+	return nil
+}
+
 // initHTTPSListeners creates TCP/UDP listeners and HTTP/H3 servers.
 func (p *Proxy) initHTTPSListeners(ctx context.Context) (err error) {
 	p.httpsServer = &http.Server{
