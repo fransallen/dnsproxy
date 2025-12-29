@@ -179,6 +179,12 @@ func newDoHReq(r *http.Request, l *slog.Logger) (req *dns.Msg, statusCode int) {
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p.logger.Debug("incoming https request", "url", r.URL)
 
+	// Serve web content for reserved paths (/, /_next/*, /images/*, /favicon.ico)
+	if isWebPath(r.URL.Path) {
+		p.serveWeb(w, r)
+		return
+	}
+
 	raddr, prx, err := remoteAddr(r, p.logger)
 	if err != nil {
 		p.logger.Debug("getting real ip", slogutil.KeyError, err)
