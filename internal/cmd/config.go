@@ -52,6 +52,9 @@ type configuration struct {
 	// HTTPSListenPorts are the ports server listens on for DNS-over-HTTPS.
 	HTTPSListenPorts []int `yaml:"https-port"`
 
+	// HTTPListenPorts are the ports server listens on for HTTP redirect to HTTPS.
+	HTTPListenPorts []int `yaml:"http-port"`
+
 	// TLSListenPorts are the ports server listens on for DNS-over-TLS.
 	TLSListenPorts []int `yaml:"tls-port"`
 

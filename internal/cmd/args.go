@@ -28,6 +28,7 @@ const (
 	listenAddrsIdx
 	listenPortsIdx
 	httpsListenPortsIdx
+	httpListenPortsIdx
 	tlsListenPortsIdx
 	quicListenPortsIdx
 	dnsCryptListenPortsIdx
@@ -155,6 +156,12 @@ var commandLineOptions = []*commandLineOption{
 		description: "Listening ports for DNS-over-HTTPS.",
 		long:        "https-port",
 		short:       "s",
+		valueType:   "port",
+	},
+	httpListenPortsIdx: {
+		description: "Listening ports for HTTP redirect to HTTPS.",
+		long:        "http-port",
+		short:       "w",
 		valueType:   "port",
 	},
 	tlsListenPortsIdx: {
@@ -425,6 +432,7 @@ func parseCmdLineOptions(conf *configuration) (err error) {
 		listenAddrsIdx:              &conf.ListenAddrs,
 		listenPortsIdx:              &conf.ListenPorts,
 		httpsListenPortsIdx:         &conf.HTTPSListenPorts,
+		httpListenPortsIdx:          &conf.HTTPListenPorts,
 		tlsListenPortsIdx:           &conf.TLSListenPorts,
 		quicListenPortsIdx:          &conf.QUICListenPorts,
 		dnsCryptListenPortsIdx:      &conf.DNSCryptListenPorts,
