@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/AdguardTeam/golibs/httphdr"
@@ -36,6 +37,19 @@ func (p *Proxy) serveWeb(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("pong"))
 		return
+	}
+
+	// Redirect if request host is not puredns.org (production only)
+	if os.Getenv("GO_ENV") == "production" {
+		host := r.Host
+		if host != "puredns.org" {
+			redirectURL := "https://puredns.org" + r.URL.Path
+			if r.URL.RawQuery != "" {
+				redirectURL += "?" + r.URL.RawQuery
+			}
+			http.Redirect(w, r, redirectURL, http.StatusMovedPermanently)
+			return
+		}
 	}
 
 	target, err := url.Parse(webProxyTarget)
