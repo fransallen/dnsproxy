@@ -15,9 +15,9 @@ import (
 const webProxyTarget = "https://puredns.pages.dev"
 
 // isWebPath checks if the given path should be handled by the web proxy.
-// Reserved paths: /, /_next/*, /images/*, /favicon.ico, /ping
+// Reserved paths: /, /_next/*, /images/*, /favicon.ico, /ping, /setup
 func isWebPath(path string) bool {
-	if path == "/" || path == "/favicon.ico" || path == "/ping" {
+	if path == "/" || path == "/favicon.ico" || path == "/ping" || path == "/setup" {
 		return true
 	}
 

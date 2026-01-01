@@ -212,7 +212,7 @@ func newDoHReq(r *http.Request, l *slog.Logger) (req *dns.Msg, statusCode int) {
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p.logger.Debug("incoming https request", "url", r.URL)
 
-	// Serve web content for reserved paths (/, /_next/*, /images/*, /favicon.ico)
+	// Serve web content for reserved paths
 	if isWebPath(r.URL.Path) {
 		p.serveWeb(w, r)
 		return
